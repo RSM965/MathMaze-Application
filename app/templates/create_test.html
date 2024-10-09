@@ -1,0 +1,51 @@
+<!-- app/templates/create_test.html -->
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Create a New Test</h1>
+    <form method="POST" action="{{ url_for('routes.create_test') }}">
+        <div class="form-group">
+            <label for="test_name">Test Name:</label><br>
+            <input type="text" id="test_name" name="test_name" required>
+        </div><br>
+
+        <div id="questions-container">
+            <!-- Questions will be dynamically added here -->
+        </div>
+
+        <input type="hidden" id="total_questions" name="total_questions" value="0">
+
+        <button type="button" class="add-question-btn" onclick="addQuestion()">Add Question</button><br><br>
+        <button type="submit" class="submit-btn">Create Test</button>
+    </form>
+
+    <script>
+        let questionCount = 0;
+
+        function addQuestion() {
+            const container = document.getElementById('questions-container');
+            const totalQuestionsInput = document.getElementById('total_questions');
+
+            const questionHTML = `
+                <div class="question-block">
+                    <h3>Question ${questionCount + 1}</h3>
+                    <label for="question_${questionCount}">Question Text:</label><br>
+                    <input type="text" id="question_${questionCount}" name="question_${questionCount}" required><br><br>
+
+                    <label>Options:</label><br>
+                    <input type="text" name="option_${questionCount}_1" placeholder="Option 1" required><br>
+                    <input type="text" name="option_${questionCount}_2" placeholder="Option 2" required><br>
+                    <input type="text" name="option_${questionCount}_3" placeholder="Option 3" required><br>
+                    <input type="text" name="option_${questionCount}_4" placeholder="Option 4" required><br><br>
+
+                    <label for="answer_${questionCount}">Correct Answer:</label><br>
+                    <input type="text" id="answer_${questionCount}" name="answer_${questionCount}" required><br><br>
+                </div>
+                <hr>
+            `;
+            container.insertAdjacentHTML('beforeend', questionHTML);
+            questionCount++;
+            totalQuestionsInput.value = questionCount;
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <script>
+        function toggleParentInfo() {
+            const role = document.querySelector('select[name="role"]').value;
+            const parentInfo = document.getElementById('parentInfo');
+            const parentFields = parentInfo.querySelectorAll('input');
+
+            if (role === 'student') {
+                parentInfo.style.display = 'block';
+                parentFields.forEach(field => field.setAttribute('required', ''));
+            } else {
+                parentInfo.style.display = 'none';
+                parentFields.forEach(field => field.removeAttribute('required'));
+            }
+        }
+    </script>
+    <h2>Register</h2>
+    <form method="POST" action="{{ url_for('routes.register') }}">
+        <div>
+            <label for="username">Username</label><br>
+            <input type="text" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password</label><br>
+            <input type="password" name="password" required>
+        </div>
+        <div>
+            <label for="role">Role</label><br>
+            <select name="role" onchange="toggleParentInfo()" required>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+            </select>
+        </div>
+        <div id="parentInfo" style="display: none;">
+            <h3>Parent Information</h3>
+            <div>
+                <label for="parent_username">Parent Username</label><br>
+                <input type="text" name="parent_username">
+            </div>
+            <div>
+                <label for="parent_password">Parent Password</label><br>
+                <input type="password" name="parent_password">
+            </div>
+        </div>
+        <div>
+            <button type="submit">Register</button>
+        </div>
+    </form>
+
+{% endblock %}

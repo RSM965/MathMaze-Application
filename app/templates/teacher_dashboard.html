@@ -1,0 +1,46 @@
+<!-- app/templates/teacher_dashboard.html -->
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Teacher Dashboard</h1>
+
+    <!-- Average Students Results -->
+    <div class="section">
+        <h2>Average Students Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Test Name</th>
+                    <th>Average Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in tests %}
+                    <tr>
+                        <td>{{ test.name }}</td>
+                        <td>{{ test.average_score }}/100</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Previous Test Questions -->
+    <div class="section">
+        <h2>Previous Test Questions</h2>
+        <ul>
+            {% for test in previous_tests %}
+                <li>
+                    <strong>{{ test.name }}</strong> - 
+                    <a href="{{ url_for('routes.view_test', test_id=test.id) }}">View Questions</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Create a New Test -->
+    <div class="section">
+        <h2>Create a New Test</h2>
+        <a href="{{ url_for('routes.create_test') }}" class="button">Create Test</a>
+    </div>
+{% endblock %}

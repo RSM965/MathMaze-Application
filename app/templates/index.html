@@ -1,0 +1,13 @@
+<!-- app/templates/index.html -->
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Welcome to the Application</h1>
+    <p>This is a platform for students, parents, and teachers to manage and view test results.</p>
+    {% if current_user.is_authenticated %}
+        <p>You are logged in as <strong>{{ current_user.username }}</strong>.</p>
+    {% else %}
+        <p>Please <a href="{{ url_for('routes.login') }}">log in</a> to access your dashboard.</p>
+        <p>Dont have an account! <a href="{{ url_for('routes.register') }}">Register</a> Here.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+<!-- app/templates/test_page.html -->
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>{{ test.name }}</h1>
+    <form method="POST" action="{{ url_for('routes.student_test', test_id=test.id) }}">
+        {% for question in test.questions %}
+            <div class="question">
+                <h3>Question {{ loop.index }}: {{ question.text }}</h3>
+                {% for option in question.options %}
+                    <input type="radio" id="option_{{ question.id }}_{{ option.id }}" name="question_{{ question.id }}" value="{{ option.id }}" required>
+                    <label for="option_{{ question.id }}_{{ option.id }}">{{ option.text }}</label><br>
+                {% endfor %}
+            </div>
+            <br>
+        {% endfor %}
+        <button type="submit">Submit Test</button>
+    </form>
+{% endblock %}

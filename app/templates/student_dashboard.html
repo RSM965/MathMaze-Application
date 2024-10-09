@@ -1,0 +1,52 @@
+<!-- app/templates/student_dashboard.html -->
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Student Dashboard</h1>
+
+    <!-- Previous Test Results -->
+    <div class="section">
+        <h2>Previous Test Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Test Name</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in previous_results %}
+                    <tr>
+                        <td>{{ result.test.name }}</td>
+                        <td>{{ result.score }}/100</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Ongoing Test -->
+    <div class="section">
+        <h2>Ongoing Test</h2>
+        {% if ongoing_test %}
+            <p>Test Name: <strong>{{ ongoing_test.name }}</strong></p>
+            <p>Date: <strong>{{ ongoing_test.date_created.strftime('%Y-%m-%d') }}</strong></p>
+            <a href="{{ url_for('routes.student_test', test_id=ongoing_test.id) }}" class="button">Attend Test</a>
+        {% else %}
+            <p>No ongoing tests available.</p>
+        {% endif %}
+    </div>
+
+    <!-- Average Score -->
+    <div class="section">
+        <h2>Your Average Score: {{ average_score }}/100</h2>
+    </div>
+
+    <!-- Chatbot Section -->
+    <div id="chatbot-section">
+        <h2>Chat with Assistant</h2>
+        <div id="chatbot"></div>
+        <input type="text" id="chat_input" placeholder="Ask a question..." />
+        <button onclick="sendChat()">Send</button>
+    </div>
+{% endblock %}
