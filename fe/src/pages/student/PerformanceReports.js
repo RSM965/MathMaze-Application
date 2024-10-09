@@ -22,16 +22,15 @@ const PerformanceReports = () => {
   const reportsArray = Array.isArray(performanceReports)
     ? performanceReports
     : [];
+  const available= reportsArray.length===0 ? true:false
   console.log(reportsArray)
   console.log("Report",performanceReports)
   return (
     <div className="container mx-auto mt-10 px-4">
       <h1 className="text-2xl font-semibold mb-6">Your Performance Reports</h1>
 
-      {/* Loading Indicator */}
-      {loading && <p className="text-gray-700">Loading performance reports...</p>}
-
-      {/* Error Message */}
+      
+    {/* Error Message */}
       {error && (
         <p className="text-red-600">
           {typeof error === 'string'
@@ -44,7 +43,7 @@ const PerformanceReports = () => {
       {loading && !error && reportsArray.length > 0 ? (
         <PerformanceChart performance_reports={reportsArray}/>
       ) : (
-        !loading && !error && <p className="text-gray-700">No performance reports available.</p>
+        available && <p className="text-gray-700">No performance reports available.</p>
       )}
     </div>
   );

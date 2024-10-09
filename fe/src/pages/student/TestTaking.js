@@ -1,4 +1,3 @@
-// src/pages/student/TestTaking.js
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTestDetails, submitTest } from '../../redux/actions/studentActions';
@@ -27,35 +26,44 @@ const TestTaking = () => {
     navigate('/student/performance');
   };
 
-  if (!testDetails) return <div>Loading...</div>;
+  if (!testDetails) return <div className="text-center text-blue-600 font-semibold mt-10">Loading test details...</div>;
 
   return (
-    <form onSubmit={handleSubmit} className="container mx-auto mt-10">
-      <h1 className="text-2xl mb-6">{testDetails.test_name}</h1>
+    <form onSubmit={handleSubmit} className="container mx-auto mt-10 px-4 bg-white p-8 rounded-lg shadow-md">
+      <div className="text-center mb-10">
+        <h1 className="text-4xl font-bold text-blue-900 mb-4">{testDetails.test_name}</h1>
+        <p className="text-gray-600 mb-6">Answer the questions below to complete your test.</p>
+      </div>
+
       {testDetails.questions.map((question) => (
-        <div key={question.question_id} className="mb-4">
-          <p className="mb-2">{question.question_text}</p>
+        <div key={question.question_id} className="mb-8 p-6 border rounded-lg shadow-sm bg-gray-50">
+          <p className="text-xl font-semibold text-gray-800 mb-4">{question.question_text}</p>
           {question.options.map((option) => (
-            <div key={option.option_id} className="mb-1">
+            <div key={option.option_id} className="mb-2">
               <label className="flex items-center">
                 <input
                   type="radio"
                   name={`question_${question.question_id}`}
                   value={option.option_id}
-                  onChange={() =>
-                    handleOptionChange(question.question_id, option.option_id)
-                  }
+                  onChange={() => handleOptionChange(question.question_id, option.option_id)}
                   required
+                  className="form-radio h-5 w-5 text-blue-600"
                 />
-                <span className="ml-2">{option.option_text}</span>
+                <span className="ml-3 text-gray-700">{option.option_text}</span>
               </label>
             </div>
           ))}
         </div>
       ))}
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-        Submit Test
-      </button>
+
+      <div className="flex justify-center mt-10">
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-8 py-3 rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+        >
+          Submit Test
+        </button>
+      </div>
     </form>
   );
 };

@@ -1,5 +1,32 @@
 // src/redux/actions/studentActions.js
 import axios from '../../utils/axiosConfig';
+
+import {
+  FETCH_RECOMMENDED_CLASSES_REQUEST,
+  FETCH_RECOMMENDED_CLASSES_SUCCESS,
+  FETCH_RECOMMENDED_CLASSES_FAILURE,
+} from '../reducers/studentReducer';
+
+export const fetchRecommendedClasses = (studentId) => async (dispatch) => {
+  dispatch({ type: FETCH_RECOMMENDED_CLASSES_REQUEST });
+
+  try {
+    const response = await axios.get(`/api/students/${studentId}/recommendations`);
+    dispatch({
+      type: FETCH_RECOMMENDED_CLASSES_SUCCESS,
+      payload: response.data.recommended_classes,
+    });
+  } catch (error) {
+    dispatch({
+      type: FETCH_RECOMMENDED_CLASSES_FAILURE,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
 export const fetchTests = (class_id) => async (dispatch, getState) => {
   try {
     dispatch({ type: 'FETCH_TESTS_REQUEST' });
@@ -35,6 +62,7 @@ export const fetchEnrolledClasses = () => async (dispatch, getState) => {
     const res = await axios.get(`/api/students/${student_id}/classes`);
     console.log(res)
     dispatch({ type: 'FETCH_ENROLLED_CLASSES_SUCCESS', payload: res.data.classes });
+    
   } catch (error) {
     console.log(error)
     dispatch({ type: 'FETCH_ENROLLED_CLASSES_FAIL', payload: error.response?.data || error.message });
@@ -56,6 +84,10 @@ export const enrollInClass = (class_id) => async (dispatch, getState) => {
     const student_id = user.user_id;
     await axios.post(`/api/students/${student_id}/classes/${class_id}/enroll`);
     dispatch({ type: 'ENROLL_IN_CLASS_SUCCESS', payload: class_id });
+    await dispatch(fetchEnrolledClasses());
+
+    // Fetch updated recommendations
+    await dispatch(fetchRecommendedClasses(student_id));
   } catch (error) {
     dispatch({ type: 'ENROLL_IN_CLASS_FAIL', payload: error.response?.data || error.message });
   }

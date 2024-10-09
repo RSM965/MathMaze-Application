@@ -1,4 +1,8 @@
 // src/redux/reducers/studentReducer.js
+export const FETCH_RECOMMENDED_CLASSES_REQUEST = 'FETCH_RECOMMENDED_CLASSES_REQUEST';
+export const FETCH_RECOMMENDED_CLASSES_SUCCESS = 'FETCH_RECOMMENDED_CLASSES_SUCCESS';
+export const FETCH_RECOMMENDED_CLASSES_FAILURE = 'FETCH_RECOMMENDED_CLASSES_FAILURE';
+
 const initialState = {
   classes: [],
   availableClasses: [],
@@ -6,7 +10,11 @@ const initialState = {
   currentTest: null,
   performanceReports: [],
   feedback: [],
-  error: null,
+  recommendedClasses: [],
+  loadingClasses: false,
+  loadingRecommended: false,
+  errorClasses: null,
+  errorRecommended: null,
 };
 
 const studentReducer = (state = initialState, action) => {
@@ -57,11 +65,22 @@ const studentReducer = (state = initialState, action) => {
       return { ...state, error: action.payload };
     case 'FETCH_TESTS_REQUEST':
       return { ...state, loading: true, error: null };
-    case 'FETCH_TESTS_SUCCESS':
-      return { ...state, loading: false, tests: action.payload };
-    case 'FETCH_TESTS_FAIL':
-      console.log("IN State Dispatch",action.payload)
-      return { ...state, loading: false, error: action.payload };
+    case FETCH_RECOMMENDED_CLASSES_REQUEST:
+      return { ...state, loadingRecommended: true, errorRecommended: null };
+
+    case FETCH_RECOMMENDED_CLASSES_SUCCESS:
+      return {
+        ...state,
+        loadingRecommended: false,
+        recommendedClasses: action.payload,
+      };
+
+    case FETCH_RECOMMENDED_CLASSES_FAILURE:
+      return {
+        ...state,
+        loadingRecommended: false,
+        errorRecommended: action.payload,
+      };
     default:
       return state;
 

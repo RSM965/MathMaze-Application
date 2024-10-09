@@ -1,7 +1,10 @@
 import os
 import requests
 import logging
+import dotenv
 
+from dotenv import load_dotenv
+load_dotenv()
 # Load environment variables
 AZURE_OPENAI_ENDPOINT = os.getenv('AZURE_OPENAI_ENDPOINT')  # e.g., "https://edu-openai-service.openai.azure.com"
 AZURE_OPENAI_API_KEY = os.getenv('AZURE_OPENAI_API_KEY')  # Get this from Azure portal
