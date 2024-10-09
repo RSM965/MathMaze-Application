@@ -1,5 +1,3 @@
-// src/components/PerformanceChart.js
-
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchAllCategories } from '../../redux/actions/miscActions';
@@ -67,9 +65,10 @@ const PerformanceChart = ({ performance_reports }) => {
       {
         label: 'Total Scores',
         data: Object.values(aggregatedScores),
-        backgroundColor: 'rgba(54, 162, 235, 0.6)', // Semi-transparent blue
-        borderColor: 'rgba(54, 162, 235, 1)',       // Solid blue
+        backgroundColor: 'rgba(75, 192, 192, 0.6)', // Semi-transparent teal
+        borderColor: 'rgba(75, 192, 192, 1)',       // Solid teal
         borderWidth: 1,
+        hoverBackgroundColor: 'rgba(75, 192, 192, 0.8)', // Highlight on hover
       },
     ],
   };
@@ -81,10 +80,29 @@ const PerformanceChart = ({ performance_reports }) => {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          font: {
+            size: 12,
+            family: 'Arial, Helvetica, sans-serif',
+            weight: 'bold',
+          },
+          color: '#333',
+        },
       },
       title: {
         display: true,
         text: 'Performance by Category',
+        font: {
+          size: 18,
+          family: 'Arial, Helvetica, sans-serif',
+          weight: 'bold',
+        },
+        color: '#111',
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => `Score: ${context.raw}`, // Custom tooltip formatting
+        },
       },
     },
     scales: {
@@ -93,12 +111,38 @@ const PerformanceChart = ({ performance_reports }) => {
         title: {
           display: true,
           text: 'Score',
+          font: {
+            size: 14,
+            family: 'Arial, Helvetica, sans-serif',
+            weight: 'bold',
+          },
+          color: '#555',
+        },
+        ticks: {
+          font: {
+            size: 12,
+            family: 'Arial, Helvetica, sans-serif',
+          },
+          color: '#444',
         },
       },
       x: {
         title: {
           display: true,
           text: 'Category',
+          font: {
+            size: 14,
+            family: 'Arial, Helvetica, sans-serif',
+            weight: 'bold',
+          },
+          color: '#555',
+        },
+        ticks: {
+          font: {
+            size: 12,
+            family: 'Arial, Helvetica, sans-serif',
+          },
+          color: '#444',
         },
       },
     },
@@ -117,16 +161,28 @@ const PerformanceChart = ({ performance_reports }) => {
 
   // **10. Loading or Error Handling**
   if (loading) {
-    return <div>Loading categories...</div>;
+    return <div className="alert alert-info text-center">Loading categories...</div>;
   }
 
   if (error) {
-    return <div>Error loading categories: {error}</div>;
+    return <div className="alert alert-danger text-center">Error loading categories: {error}</div>;
   }
 
   return (
-    <div style={{ height: '400px', width: '600px' }}>
-      <Bar ref={chartRef} data={data} options={options} />
+    <div className="container my-4">
+      <div className="card shadow-sm">
+        <div className="card-header bg-primary text-white text-center py-2">
+          <h4>Performance Chart</h4>
+        </div>
+        <div className="card-body">
+          <div style={{ height: '400px', width: '100%' }} className="mx-auto">
+            <Bar ref={chartRef} data={data} options={options} />
+          </div>
+        </div>
+        <div className="card-footer text-muted text-center py-1">
+          <small style={{ fontFamily: 'Arial, Helvetica, sans-serif', fontSize: '13px', fontWeight: 'bold', color: '#555' }}>Data visualization of performance scores by category.</small>
+        </div>
+      </div>
     </div>
   );
 };

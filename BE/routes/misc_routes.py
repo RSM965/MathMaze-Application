@@ -20,16 +20,19 @@ def get_all_categories():
     # Return the categories in JSON format with a 200 OK status
     return jsonify({'categories': categories_data}), 200
 
+
+
 @misc_bp.route('/classes', methods=['GET'])
 def get_available_classes():
     classes = Class.query.all()
     classes_data = [{'class_id': c.class_id, 'class_name': c.class_name, 'teacher_id': c.teacher_id} for c in classes]
     return jsonify({'classes': classes_data}), 200
 
-@misc_bp.route('/chatbot',methods=['POST'])
-def getChatResponse():
+@misc_bp.route('/chatbot/<int:user_id>',methods=['POST'])
+def getChatResponse(user_id):
+    print(user_id)
     data = request.get_json()
     print(data)
-    resp=get_response(data["message"],data["history"])
+    resp=get_response(data["message"],user_id,data["history"])
     print(resp)
     return jsonify({'reply': resp}),200

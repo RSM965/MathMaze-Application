@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from models import Student, Class, Test, Question, Option, PerformanceReport, Feedback, db ,User
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime
-
+from recommender import load_model, recommendation_model
 student_bp = Blueprint('student_bp', __name__, url_prefix='/api/students')
 
 def is_authorized_student(student_id):
@@ -364,3 +364,102 @@ def respond_to_feedback(student_id):
     db.session.commit()
 
     return jsonify({'message': 'Feedback sent successfully'}), 201
+
+def get_enrollment_count(class_id):
+    """Helper function to get the enrollment count for a class."""
+    return db.session.query(class_students).filter_by(class_id=class_id).count()
+
+# In your student_routes.py or equivalent
+
+@student_bp.route('/<int:student_id>/recommendations', methods=['GET'])
+@jwt_required()
+def recommend_classes(student_id):
+    """Recommend classes to a student based on the trained recommendation model."""
+    # Check authorization
+    identity = get_jwt_identity()
+    if identity['user_id'] != student_id or identity['role'] != 'Student':
+        return jsonify({'message': 'Unauthorized'}), 403
+    recommendation_model=load_model()
+    # Fetch the student
+    student = Student.query.get(student_id)
+    if not student:
+        return jsonify({'message': 'Student not found'}), 404
+    print(recommendation_model)
+    # Check if the recommendation model is loaded
+    if recommendation_model is None or not recommendation_model:
+        return jsonify({'message': 'Recommendation model not available'}), 500
+
+    # Get all class IDs
+    all_class_ids = [cls.class_id for cls in Class.query.all()]
+
+    # Get the student's enrolled class IDs
+    enrolled_class_ids = [cls.class_id for cls in student.enrolled_classes]
+
+    # Get candidate classes (not enrolled)
+    candidate_class_ids = [class_id for class_id in all_class_ids if class_id not in enrolled_class_ids]
+
+    # Check if there are any candidate classes
+    if not candidate_class_ids:
+        return jsonify({'message': 'No classes available for recommendation'}), 200
+
+    # Retrieve scores from the recommendation model
+    class_scores = []
+    for class_id in candidate_class_ids:
+        score = recommendation_model.get(class_id)
+        if score is not None and score > 0:
+            class_scores.append((class_id, score))
+
+    if not class_scores:
+        # No recommendations available, return top 5 non-enrolled classes by enrollment rate
+        non_enrolled_classes = Class.query.filter(~Class.class_id.in_(enrolled_class_ids)).all()
+
+        # Sort the classes by enrollment count in descending order
+        top_classes = sorted(
+            non_enrolled_classes,
+            key=lambda cls: len(cls.students),
+            reverse=True
+        )[:5]
+
+        # Prepare the data to return
+        recommended_data = []
+        for cls in top_classes:
+            teacher = User.query.get(cls.teacher_id)
+            teacher_name = teacher.username if teacher else 'Unknown'
+            categories = [category.category_name for category in cls.categories]
+
+            recommended_data.append({
+                'class_id': cls.class_id,
+                'class_name': cls.class_name,
+                'teacher_name': teacher_name,
+                'categories': categories,
+                'enrollment_count': len(cls.students)
+            })
+
+        return jsonify({'recommended_classes': recommended_data}), 200
+
+    # Sort recommended classes by score in descending order and take top 5
+    recommended_classes = sorted(
+        class_scores,
+        key=lambda x: x[1],
+        reverse=True
+    )[:5]
+
+    # Prepare the data to return
+    recommended_data = []
+    for class_id, score in recommended_classes:
+        cls = Class.query.get(class_id)
+        if cls:
+            teacher = User.query.get(cls.teacher_id)
+            teacher_name = teacher.username if teacher else 'Unknown'
+            categories = [category.category_name for category in cls.categories]
+
+            recommended_data.append({
+                'class_id': cls.class_id,
+                'class_name': cls.class_name,
+                'teacher_name': teacher_name,
+                'categories': categories,
+                'recommendation_score': score
+            })
+
+    return jsonify({'recommended_classes': recommended_data}), 200
+

@@ -1,13 +1,27 @@
+# models.py
+
 from datetime import datetime
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.types import PickleType
 from extensions import db  # Ensure db is imported from extensions.py
 
-# Association Table for Many-to-Many Relationship between Test and Category
+# Association Tables
 test_categories = db.Table('test_categories',
     db.Column('test_id', db.Integer, db.ForeignKey('tests.test_id'), primary_key=True),
     db.Column('category_id', db.Integer, db.ForeignKey('categories.category_id'), primary_key=True)
 )
 
+student_categories = db.Table('student_categories',
+    db.Column('student_id', db.Integer, db.ForeignKey('students.student_id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('categories.category_id'), primary_key=True)
+)
+
+class_students = db.Table('class_students',
+    db.Column('class_id', db.Integer, db.ForeignKey('classes.class_id'), primary_key=True),
+    db.Column('student_id', db.Integer, db.ForeignKey('students.student_id'), primary_key=True)
+)
+
+# User Model
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -23,12 +37,6 @@ class User(db.Model):
     student = db.relationship('Student', backref='user', uselist=False)
     parent = db.relationship('Parent', backref='user', uselist=False)
 
-# Association table for Many-to-Many relationship between Class and Student
-class_students = db.Table('class_students',
-    db.Column('class_id', db.Integer, db.ForeignKey('classes.class_id'), primary_key=True),
-    db.Column('student_id', db.Integer, db.ForeignKey('students.student_id'), primary_key=True)
-)
-
 # Teacher Model
 class Teacher(db.Model):
     __tablename__ = 'teachers'
@@ -42,16 +50,17 @@ class Student(db.Model):
 
     student_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
     parent_id = db.Column(db.Integer, db.ForeignKey('parents.parent_id'))
-    parent_email=db.Column(db.String(120), nullable=False)
+    parent_email = db.Column(db.String(120), nullable=False)
     enrolled_classes = db.relationship('Class', secondary=class_students, back_populates='students')
     performance_reports = db.relationship('PerformanceReport', backref='student', lazy=True)
+    interest_categories = db.relationship('Category', secondary=student_categories, backref='interested_students', lazy=True)
 
 # Parent Model
 class Parent(db.Model):
     __tablename__ = 'parents'
 
     parent_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
-    children_id = db.Column(db.Integer,nullable=False)
+    children_id = db.Column(db.Integer, nullable=False)
     children = db.relationship('Student', backref='parent', lazy=True)
 
 # Class Model
@@ -61,9 +70,9 @@ class Class(db.Model):
     class_id = db.Column(db.Integer, primary_key=True)
     class_name = db.Column(db.String(100), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), nullable=False)
-    categories = db.relationship('Category', backref='class', lazy=True)
+    categories = db.relationship('Category', backref='class_obj', lazy=True)
     students = db.relationship('Student', secondary=class_students, back_populates='enrolled_classes')
-    tests = db.relationship('Test', backref='class', lazy=True)
+    tests = db.relationship('Test', backref='class_obj', lazy=True)
 
 # Category Model
 class Category(db.Model):
@@ -72,6 +81,14 @@ class Category(db.Model):
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(50), nullable=False)
     class_id = db.Column(db.Integer, db.ForeignKey('classes.class_id'), nullable=False)
+
+    # Enforce uniqueness per class
+    __table_args__ = (
+        UniqueConstraint('category_name', 'class_id', name='_category_class_uc'),
+    )
+
+    # Relationships
+    questions = db.relationship('Question', backref='category', lazy=True)
 
 # Test Model
 class Test(db.Model):

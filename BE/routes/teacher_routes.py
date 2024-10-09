@@ -92,13 +92,20 @@ def create_class(teacher_id):
     db.session.add(new_class)
     db.session.commit()
 
-    # Add categories
+    # Add categories: Check if they already exist, if so, reuse them
     for category_name in categories_data:
-        category = Category(category_name=category_name, class_id=new_class.class_id)
-        db.session.add(category)
-    db.session.commit()
+        category = Category.query.filter_by(category_name=category_name).first()
+        if not category:
+            # If the category doesn't exist, create a new one
+            category = Category(category_name=category_name, class_id=new_class.class_id)
+            db.session.add(category)
+        else:
+            # If it exists, just reuse the category
+            category.class_id = new_class.class_id
+        db.session.commit()
 
     return jsonify({'message': 'Class created successfully', 'class_id': new_class.class_id}), 201
+
 
 @teacher_bp.route('/<int:teacher_id>/classes/<int:class_id>', methods=['PUT'])
 @jwt_required()
