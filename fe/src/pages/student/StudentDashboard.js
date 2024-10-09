@@ -1,16 +1,14 @@
-// src/pages/student/StudentDashboard.js
-
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Chatbot from '../../components/common/ChatBot'; 
+import Chatbot from '../../components/common/ChatBot';
 import { fetchEnrolledClasses } from '../../redux/actions/studentActions';
 import { useNavigate } from 'react-router-dom';
+import StudyHelper from './StudyHelper';
 
 const StudentDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Access the classes from the Redux store
   const classes = useSelector((state) => state.student.classes);
   const loading = useSelector((state) => state.student.loading);
   const error = useSelector((state) => state.student.error);
@@ -27,16 +25,12 @@ const StudentDashboard = () => {
     navigate('/student/enroll');
   };
 
-  // Ensure classes is an array
   const classesArray = Array.isArray(classes) ? classes : [];
 
   return (
     <div className="container mx-auto mt-10">
       <h1 className="text-2xl mb-6">Student Dashboard</h1>
-      <button
-        className="bg-green-600 text-white px-4 py-2 rounded mb-4"
-        onClick={handleEnroll}
-      >
+      <button className="bg-green-600 text-white px-4 py-2 rounded mb-4" onClick={handleEnroll}>
         Enroll in Class
       </button>
       {loading && <p>Loading classes...</p>}
@@ -51,10 +45,7 @@ const StudentDashboard = () => {
             <div key={cls.class_id} className="border p-4 mb-4 rounded">
               <h2 className="text-xl">{cls.class_name}</h2>
               <div className="mt-2">
-                <button
-                  className="bg-blue-600 text-white px-4 py-2 rounded mr-2"
-                  onClick={() => handleViewTests(cls.class_id)}
-                >
+                <button className="bg-blue-600 text-white px-4 py-2 rounded mr-2" onClick={() => handleViewTests(cls.class_id)}>
                   View Tests
                 </button>
               </div>
@@ -66,6 +57,8 @@ const StudentDashboard = () => {
       </div>
       {/* Add Chatbot here */}
       <Chatbot />
+      {/* Add AI Study Helper here */}
+      <StudyHelper studentId={'studentId123'} />
     </div>
   );
 };

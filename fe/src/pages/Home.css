@@ -1,0 +1,45 @@
+/* Home.css */
+
+/* Fade-in / Fade-out Animation */
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.5s ease-in;
+  }
+  
+  .fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+  }
+  
+  /* Improved Testimonial Box Layout */
+  .testimonial-box {
+    max-width: 400px; /* Increased the width to accommodate larger elements */
+    text-align: center;
+  }
+  
+  /* Typography for the Tagline */
+  h1 {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .testimonial p {
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  /* Hover and Focus Effects on Buttons */
+  button {
+    transition: background-color 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: #ddd;
+  }
+  
+  button:focus {
+    outline: none;
+    background-color: #ccc;
+  }
+  

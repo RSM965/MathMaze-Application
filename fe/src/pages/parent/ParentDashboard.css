@@ -1,0 +1,133 @@
+.parent-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  background: linear-gradient(to bottom, #e0f7fa, #f9f9f9);
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+.parent-dashboard-header {
+  background: linear-gradient(90deg, #43cea2, #185a9d);
+  color: #fff;
+  padding: 25px;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.parent-dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 85%;
+  max-width: 1100px;
+  margin: 40px auto;
+}
+
+.student-reports-section, .student-performance-chart-section, .student-recommendations-section {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.student-reports-section:hover, .student-performance-chart-section:hover, .student-recommendations-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.student-reports-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+}
+
+.report-card {
+  background-color: #f7f9fc;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: box-shadow 0.3s ease;
+}
+
+.report-card:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.report-card h3 {
+  color: #185a9d;
+  margin-bottom: 10px;
+}
+
+.download-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #fff;
+  background-color: #185a9d;
+  padding: 8px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.download-link:hover {
+  background-color: #43cea2;
+}
+
+.ai-recommendations-button {
+  display: inline-block;
+  margin-top: 10px;
+  color: #fff;
+  background-color: #ff9800;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.ai-recommendations-button:hover {
+  background-color: #ffa726;
+}
+
+.recommendations-container {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f7f9fc;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.performance-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.chart-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.parent-dashboard-footer {
+  background: linear-gradient(90deg, #185a9d, #43cea2);
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  position: relative;
+  margin-top: auto;
+}
+
+.error-message {
+  color: #d9534f;
+  font-weight: bold;
+}
